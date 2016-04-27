@@ -16,7 +16,7 @@ Example of a continuous-time, stochastic, pair-based cellular automaton model,
 import time
 import matplotlib
 import matplotlib.pyplot as plt
-from numpy import where, arange, bincount
+from numpy import where, arange, bincount, zeros
 from landlab import RasterModelGrid
 from landlab.ca.celllab_cts import Transition, CAPlotter
 from landlab.ca.raster_cts import RasterCTS
@@ -65,46 +65,54 @@ def setup_transition_list():
     #  - Name for transition
     xn_list.append( Transition((0,2,0), (2,0,0), 2.0, 'left/down helium motion') )
     xn_list.append( Transition((2,0,0), (0,2,0), 2.0, 'right/up helium motion') )
-    xn_list.append( Transition((1,0,0), (3,2,0), 0.000003, 'decayof238' )) #based on ppm in rock - 4 moleculs) )
+    xn_list.append( Transition((1,0,0), (3,2,0), 0.000004, 'decayof238' )) #based on ppm in rock - 4 moleculs) )
     xn_list.append( Transition((0,1,0), (2,3,0), 0.000003, 'decayof238') )
-    xn_list.append( Transition((1,0,0), (4,2,0), 0.000003, 'decay of Uleft238') )
+    xn_list.append( Transition((1,0,0), (4,2,0), 0.000004, 'decay of Uleft238') )
     xn_list.append( Transition((0,1,0), (2,4,0), 0.000003, 'decay of Uleft238') )
-    xn_list.append( Transition((3,0,0), (0,3,0), 0.0015, 'movement of u238 right/up'))#based on decay rate of u238) )
-    xn_list.append( Transition((3,1,0), (0,3,0), 0.0015, 'movement of u238 right/up'))
-    xn_list.append( Transition((0,4,0), (4,0,0), 0.0015, 'movement of u238 left/down') )
-    xn_list.append( Transition((1,4,0), (4,0,0), 0.0015, 'movement of u238 left/down') )
-    #xn_list.append( Transition((2,4,0), (4,2,0), 0.0015, 'let a nucleus swap with an alpha') )
-    #xn_list.append( Transition((4,2,0), (2,4,0), 0.0015, 'let a nucleus swap with an alpha') )
-    #xn_list.append( Transition((2,3,0), (3,2,0), 0.0015, 'let a nucleus swap with an alpha') )
-    #xn_list.append( Transition((3,2,0), (2,3,0), 0.0015, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((3,0,0), (2,3,0), 0.015, 'movement of u238 right/up'))#based on decay rate of u238) )
+    xn_list.append( Transition((3,1,0), (2,3,0), 0.015, 'movement of u238 right/up'))
+    xn_list.append( Transition((0,4,0), (4,2,0), 0.015, 'movement of u238 left/down') )
+    xn_list.append( Transition((1,4,0), (4,2,0), 0.015, 'movement of u238 left/down') )
+    xn_list.append( Transition((2,4,0), (4,2,0), 0.015, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((4,2,0), (2,4,0), 0.015, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((2,3,0), (3,2,0), 0.015, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((3,2,0), (2,3,0), 0.015, 'let a nucleus swap with an alpha') )
     xn_list.append( Transition((3,0,0), (3,0,0), 0.0002, 'stopping of U238right'))#moves 8 times then stops) )
     xn_list.append( Transition((0,3,0), (0,3,0), 0.0002, 'stopping of U238right') )
     xn_list.append( Transition((4,0,0), (3,0,0), 0.0002, 'stopping of U238left') )
     xn_list.append( Transition((0,4,0), (0,3,0), 0.0002, 'stopping of U238left') )
     
-    #xn_list.append( Transition((1,0,0), (5,2,0), 0.00016, 'decayof235') )
-    #xn_list.append( Transition((0,1,0), (2,5,0), 0.00016, 'decayof235') )
-    #xn_list.append( Transition((1,0,0), (6,2,0), 0.00016, 'decay of U235left') )
-    #xn_list.append( Transition((0,1,0), (2,6,0), 0.00016, 'decay of U235left') )
-    #xn_list.append( Transition((5,0,0), (0,5,0), 0.0098, 'movement of uranium right/up')) #based on decay rate u235) )
-    #xn_list.append( Transition((5,1,0), (0,5,0), 0.0098, 'movement of uranium right/up') )
-    #xn_list.append( Transition((0,6,0), (6,0,0), 0.0098, 'movement of uranium left/down') )
-    #xn_list.append( Transition((1,6,0), (6,0,0), 0.0098, 'movement of uranium left/down') )
-    #xn_list.append( Transition((5,0,0), (5,0,0), 0.0014, 'stopping of Uright'))#moves 7 times then stops) )
-    #xn_list.append( Transition((0,5,0), (0,5,0), 0.0014, 'stopping of Uright') )
-    #xn_list.append( Transition((6,0,0), (6,0,0), 0.0014, 'stopping of Uleft') )
-    #xn_list.append( Transition((0,6,0), (0,6,0), 0.0014, 'stopping of Uleft') )
+    xn_list.append( Transition((1,0,0), (5,2,0), 0.000001, 'decayof235') )
+    xn_list.append( Transition((0,1,0), (2,5,0), 0.000001, 'decayof235') )
+    xn_list.append( Transition((1,0,0), (6,2,0), 0.000001, 'decay of U235left') )
+    xn_list.append( Transition((0,1,0), (2,6,0), 0.000001, 'decay of U235left') )
+    xn_list.append( Transition((5,0,0), (2,5,0), 0.098, 'movement of uranium right/up')) #based on decay rate u235) )
+    xn_list.append( Transition((5,1,0), (2,5,0), 0.098, 'movement of uranium right/up') )
+    xn_list.append( Transition((0,6,0), (6,2,0), 0.098, 'movement of uranium left/down') )
+    xn_list.append( Transition((1,6,0), (6,2,0), 0.098, 'movement of uranium left/down') )
+    xn_list.append( Transition((2,6,0), (6,2,0), 0.098, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((6,2,0), (2,6,0), 0.098, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((2,5,0), (5,2,0), 0.098, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((5,2,0), (2,5,0), 0.098, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((5,0,0), (5,0,0), 0.0014, 'stopping of Uright'))#moves 7 times then stops) )
+    xn_list.append( Transition((0,5,0), (0,5,0), 0.0014, 'stopping of Uright') )
+    xn_list.append( Transition((6,0,0), (6,0,0), 0.0014, 'stopping of Uleft') )
+    xn_list.append( Transition((0,6,0), (0,6,0), 0.0014, 'stopping of Uleft') )
     
     
     xn_list.append( Transition((1,0,0), (7,2,0), 0.000001, 'decay') )
     xn_list.append( Transition((0,1,0), (2,7,0), 0.000001, 'decay') )
     xn_list.append( Transition((1,0,0), (8,2,0), 0.000001, 'decay of Uleft') )
     xn_list.append( Transition((0,1,0), (2,8,0), 0.000001, 'decay of Uleft') )
-    xn_list.append( Transition((7,0,0), (0,7,0), 0.0004, 'movement of uranium right/up'))#based on decay rate of th) )
-    xn_list.append( Transition((7,1,0), (0,7,0), 0.0004, 'movement of uranium right/up') )
-    xn_list.append( Transition((0,8,0), (8,0,0), 0.0004, 'movement of uranium left/down') )
-    xn_list.append( Transition((1,8,0), (8,0,0), 0.0004, 'movement of uranium left/down') )
+    xn_list.append( Transition((7,0,0), (2,7,0), 0.004, 'movement of uranium right/up'))#based on decay rate of th) )
+    xn_list.append( Transition((7,1,0), (2,7,0), 0.004, 'movement of uranium right/up') )
+    xn_list.append( Transition((0,8,0), (8,2,0), 0.004, 'movement of uranium left/down') )
+    xn_list.append( Transition((1,8,0), (8,2,0), 0.004, 'movement of uranium left/down') )
     xn_list.append( Transition((7,0,0), (7,0,0), 0.00006, 'stopping of Uright'))#moves 6 times then stops) )
+    xn_list.append( Transition((2,6,0), (6,2,0), 0.004, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((6,2,0), (2,6,0), 0.004, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((2,5,0), (5,2,0), 0.004, 'let a nucleus swap with an alpha') )
+    xn_list.append( Transition((5,2,0), (2,5,0), 0.004, 'let a nucleus swap with an alpha') )
     xn_list.append( Transition((0,7,0), (0,7,0), 0.00006, 'stopping of Uright') )
     xn_list.append( Transition((8,0,0), (7,0,0), 0.00006, 'stopping of Uleft') )
     xn_list.append( Transition((0,8,0), (0,7,0), 0.00006, 'stopping of Uleft') )
@@ -129,6 +137,10 @@ def main():
 
     # Create grid
     mg = RasterModelGrid(nr, nc, 1.0)
+    
+    # Make array to record He count through time
+    he = zeros(int(run_duration/plot_interval) + 1)
+    time_step_count = 1
     
     # Make the boundaries be walls
     #mg.set_closed_boundaries_at_grid_edges(True, True, True, True)
@@ -169,12 +181,12 @@ def main():
     filled = '#cdcdc1'
     empty = '#ffffff'
     helium = '#7fffd4'
-    uranium238right = '#ff1493'
-    uranium238left = '#ff1493'
-    uranium235right = '#8a2be2'
-    uranium235left = '#8a2be2'
-    thorium232right = '#f08080'
-    thorium232left = '#f08080'
+    uranium238right = '#ff1493' #pink
+    uranium238left = '#ff1493' #pink
+    uranium235right = '#8a2be2' #purple
+    uranium235left = '#8a2be2' #purple
+    thorium232right = '#f08080' #coral
+    thorium232left = '#f08080' #coral 
     clist = [empty, filled, helium, uranium238right, uranium238left, uranium235right, uranium235left, thorium232right, thorium232left]
     my_cmap = matplotlib.colors.ListedColormap(clist)
 
@@ -204,17 +216,23 @@ def main():
         ca_plotter.update_plot()
         
         print bincount(node_state_grid)
+        he[time_step_count] = bincount(node_state_grid)[2]
+        time_step_count += 1
         #plt.plot(bincount(node_state_grid))
         #plt.ylabel('number of particles')
 
-    # FINALIZE
+   # FINALIZE
 
     # Plot
 
     ca_plotter.finalize()
-    #plt.figure(2)
-    #plt.subplot(211)
-    #plt.show()
+    
+    plt.figure(2)
+    plt.plot(he)
+    plt.ylabel('Number of Helium Atoms')
+    plt.xlabel('Run')
+    plt.title('Number of helium particles present in model')
+    plt.show()
     
 
 # If user runs this file, activate the main() function
